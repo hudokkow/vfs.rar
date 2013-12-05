@@ -860,7 +860,7 @@ void* ContainsFiles(VFSURL* url, VFSDirEntry** items, int* num_items)
       char* tofree = (*itms)[iEntry].path;
       char* encoded = XBMC->URLEncode(strPath.c_str());
       std::stringstream str;
-      str << "rar://" << encoded << "/" << (*itms)[iEntry].path << options;
+      str << "rar://" << encoded << "/" << (*itms)[iEntry].path << url->options;
       (*itms)[iEntry].path = strdup(str.str().c_str());
       free(tofree);
       XBMC->FreeString(encoded);
