@@ -833,7 +833,7 @@ void* OpenForWrite(VFSURL* url, bool bOverWrite)
 void* ContainsFiles(VFSURL* url, VFSDirEntry** items, int* num_items)
 {
   const char* sub;
-  if ((sub=strstr(url.filename, ".part")))
+  if ((sub=strstr(url->filename, ".part")))
   {
     if (!((*(sub+5) == '0'  && *(sub+6) == '1') || 
           (*(sub+6) == '0' && *(sub + 7) == '1')))
