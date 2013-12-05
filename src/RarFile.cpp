@@ -765,6 +765,7 @@ void* GetDirectory(VFSURL* url, VFSDirEntry** items, int* num_items)
       char* tofree = (*itms)[iEntry].path;
       (*itms)[iEntry].path = strdup(str.str().c_str());
       free(tofree);
+      (*itms)[iEntry].title = NULL;
     }
     *items = &(*itms)[0];
     *num_items = itms->size();
@@ -862,6 +863,7 @@ void* ContainsFiles(VFSURL* url, VFSDirEntry** items, int* num_items)
       std::stringstream str;
       str << "rar://" << encoded << "/" << (*itms)[iEntry].path << url->options;
       (*itms)[iEntry].path = strdup(str.str().c_str());
+      (*itms)[iEntry].title = NULL;
       free(tofree);
       XBMC->FreeString(encoded);
     }
