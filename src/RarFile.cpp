@@ -158,14 +158,14 @@ struct RARContext
     seekable = true;
   }
 
-  void Init(const VFSURL& url)
+  void Init(VFSURL* url)
   {
     cachedir = "special://temp/";
-    rarpath = url.hostname;
-    password = url.password;
-    pathinrar = url.filename;
+    rarpath = url->hostname;
+    password = url->password;
+    pathinrar = url->filename;
     std::vector<std::string> options;
-    std::string options2(url.options);
+    std::string options2(url->options);
     if (!options2.empty())
       CRarManager::Tokenize(options2.substr(1), options, "&");
     fileoptions = 0;
