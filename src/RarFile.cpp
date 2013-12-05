@@ -761,7 +761,7 @@ void* GetDirectory(VFSURL* url, VFSDirEntry** items, int* num_items)
     for (size_t iEntry=0;iEntry<itms->size();++iEntry)
     {
       std::stringstream str;
-      str << strPath << (*itms)[iEntry].path << options;
+      str << strPath << (*itms)[iEntry].path << url->options;
       char* tofree = (*itms)[iEntry].path;
       (*itms)[iEntry].path = strdup(str.str().c_str());
       free(tofree);
