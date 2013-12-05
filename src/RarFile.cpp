@@ -158,13 +158,14 @@ struct RARContext
     seekable = true;
   }
 
-  void Init(const std::string& hostname, const std::string& filename, const std::string& password2, const std::string& options2)
+  void Init(const VFSURL& url)
   {
     cachedir = "special://temp/";
-    rarpath = hostname;
-    password = password2;
-    pathinrar = filename;
+    rarpath = url.hostname;
+    password = url.password;
+    pathinrar = url.filename;
     std::vector<std::string> options;
+    std::string options2(url.options);
     if (!options2.empty())
       CRarManager::Tokenize(options2.substr(1), options, "&");
     fileoptions = 0;
@@ -358,13 +359,10 @@ struct RARContext
   }
 };
 
-void* Open(const char* url, const char* hostname,
-           const char* filename, unsigned int port,
-           const char* options, const char* username,
-           const char* password)
+void* Open(VFSURL* url)
 {
   RARContext* result = new RARContext;
-  result->Init(hostname, filename, password, options);
+  result->Init(url);
   std::vector<VFSDirEntry>* itms = new std::vector<VFSDirEntry>();
   std::vector<VFSDirEntry>& items = *itms;
   CRarManager::Get().GetFilesInRar(items, result->rarpath, false);
@@ -664,13 +662,10 @@ int64_t Seek(void* context, int64_t iFilePosition, int iWhence)
   return ctx->fileposition;
 }
 
-bool Exists(const char* url, const char* hostname,
-            const char* filename, unsigned int port,
-            const char* options, const char* username,
-            const char* password)
+bool Exists(VFSURL* url)
 {
   RARContext ctx;
-  ctx.Init(hostname, filename, password, options);
+  ctx.Init(url);
   
   // First step:
   // Make sure that the archive exists in the filesystem.
@@ -687,13 +682,10 @@ bool Exists(const char* url, const char* hostname,
   return bResult;
 }
 
-int Stat(const char* url, const char* hostname,
-         const char* filename2, unsigned int port,
-         const char* options, const char* username,
-         const char* password, struct __stat64* buffer)
+int Stat(VFSURL* url, struct __stat64* buffer)
 {
   memset(buffer, 0, sizeof(struct __stat64));
-  RARContext* ctx = (RARContext*)Open(url, hostname, filename2, port, options, username, password);
+  RARContext* ctx = (RARContext*)Open(url);
   if (ctx)
   {
     buffer->st_size = ctx->size;
@@ -704,7 +696,7 @@ int Stat(const char* url, const char* hostname,
   }
 
   Close(ctx);
-  if (XBMC->DirectoryExists(url))
+  if (DirectoryExists(url))
   {
     buffer->st_mode = S_IFDIR;
     return 0;
@@ -733,15 +725,11 @@ void DisconnectAll()
   CRarManager::Get().ClearCache(true);
 }
 
-bool DirectoryExists(const char* url, const char* hostname,
-                     const char* filename, unsigned int port,
-                     const char* options, const char* username,
-                     const char* password)
+bool DirectoryExists(VFSURL* url)
 {
   VFSDirEntry* dir;
   int num_items;
-  void* ctx = GetDirectory(url, hostname, filename, port, options,
-                           username, password, &dir, &num_items);
+  void* ctx = GetDirectory(url, &dir, &num_items);
   if (ctx)
   {
     FreeDirectory(ctx);
@@ -751,13 +739,9 @@ bool DirectoryExists(const char* url, const char* hostname,
   return false;
 }
 
-void* GetDirectory(const char* url, const char* hostname,
-                   const char* filename, unsigned int port,
-                   const char* options, const char* username,
-                   const char* password, VFSDirEntry** items,
-                   int* num_items)
+void* GetDirectory(VFSURL* url, VFSDirEntry** items, int* num_items)
 {
-  std::string strPath(url);
+  std::string strPath(url->url);
   size_t pos;
   if ((pos=strPath.find("?")) != std::string::npos)
     strPath.erase(strPath.begin()+pos, strPath.end());
@@ -766,9 +750,9 @@ void* GetDirectory(const char* url, const char* hostname,
   if (strPath[strPath.size()-1] != '/')
     strPath += '/';
 
-  std::string strArchive = hostname;
-  std::string strOptions = options;
-  std::string strPathInArchive = filename;
+  std::string strArchive = url.hostname;
+  std::string strOptions = url.options;
+  std::string strPathInArchive = url.filename;
 
   std::vector<VFSDirEntry>* itms = new std::vector<VFSDirEntry>;
   if (CRarManager::Get().GetFilesInRar(*itms,strArchive,true,strPathInArchive))
@@ -811,18 +795,12 @@ void FreeDirectory(void* items)
   delete &ctx;
 }
 
-bool CreateDirectory(const char* url, const char* hostname,
-                     const char* filename, unsigned int port,
-                     const char* options, const char* username,
-                     const char* password)
+bool CreateDirectory(VFSURL* url)
 {
   return false;
 }
 
-bool RemoveDirectory(const char* url, const char* hostname,
-                     const char* filename, unsigned int port,
-                     const char* options, const char* username,
-                     const char* password)
+bool RemoveDirectory(VFSURL* url)
 {
   return false;
 }
@@ -837,49 +815,32 @@ int Write(void* context, const void* lpBuf, int64_t uiBufSize)
   return -1;
 }
 
-bool Delete(const char* url, const char* hostname,
-            const char* filename2, unsigned int port,
-            const char* options, const char* username,
-            const char* password)
+bool Delete(VFSURL* url)
 {
   return false;
 }
 
-bool Rename(const char* url, const char* hostname,
-            const char* filename, unsigned int port,
-            const char* options, const char* username,
-            const char* password,
-            const char* url2, const char* hostname2,
-            const char* filename2, unsigned int port2,
-            const char* options2, const char* username2,
-            const char* password2)
+bool Rename(VFSURL* url, VFSURL* url2)
 {
   return false;
 }
 
-void* OpenForWrite(const char* url, const char* hostname,
-                   const char* filename2, unsigned int port,
-                   const char* options, const char* username,
-                   const char* password, bool bOverWrite)
+void* OpenForWrite(VFSURL* url, bool bOverWrite)
 { 
   return NULL;
 }
 
-void* ContainsFiles(const char* url, const char* hostname,
-                    const char* filename2, unsigned int port,
-                    const char* options, const char* username,
-                    const char* password,
-                    VFSDirEntry** items, int* num_items)
+void* ContainsFiles(VFSURL* url, VFSDirEntry** items, int* num_items)
 {
   const char* sub;
-  if ((sub=strstr(filename2, ".part")))
+  if ((sub=strstr(url.filename, ".part")))
   {
     if (!((*(sub+5) == '0'  && *(sub+6) == '1') || 
           (*(sub+6) == '0' && *(sub + 7) == '1')))
       return NULL;
   }
   std::vector<VFSDirEntry>* itms = new std::vector<VFSDirEntry>();
-  if (CRarManager::Get().GetFilesInRar(*itms, url))
+  if (CRarManager::Get().GetFilesInRar(*itms, url->url))
   {
     if (itms->size() == 1 && atoi((*itms)[0].properties->val) != 0x30)
     {
@@ -887,7 +848,7 @@ void* ContainsFiles(const char* url, const char* hostname,
       return NULL;
     }
     // fill in paths
-    std::string strPath(url);
+    std::string strPath(url->url);
     size_t pos;
     if ((pos=strPath.find("?")) != std::string::npos)
       strPath.erase(strPath.begin()+pos, strPath.end());
