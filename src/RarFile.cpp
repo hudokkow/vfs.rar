@@ -750,9 +750,9 @@ void* GetDirectory(VFSURL* url, VFSDirEntry** items, int* num_items)
   if (strPath[strPath.size()-1] != '/')
     strPath += '/';
 
-  std::string strArchive = url.hostname;
-  std::string strOptions = url.options;
-  std::string strPathInArchive = url.filename;
+  std::string strArchive = url->hostname;
+  std::string strOptions = url->options;
+  std::string strPathInArchive = url->filename;
 
   std::vector<VFSDirEntry>* itms = new std::vector<VFSDirEntry>;
   if (CRarManager::Get().GetFilesInRar(*itms,strArchive,true,strPathInArchive))
