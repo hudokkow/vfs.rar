@@ -729,7 +729,7 @@ bool DirectoryExists(VFSURL* url)
 {
   VFSDirEntry* dir;
   int num_items;
-  void* ctx = GetDirectory(url, &dir, &num_items);
+  void* ctx = GetDirectory(url, &dir, &num_items, NULL);
   if (ctx)
   {
     FreeDirectory(ctx);
