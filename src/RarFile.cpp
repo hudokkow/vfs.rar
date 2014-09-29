@@ -832,7 +832,7 @@ void* OpenForWrite(VFSURL* url, bool bOverWrite)
   return NULL;
 }
 
-void* ContainsFiles(VFSURL* url, VFSDirEntry** items, int* num_items)
+void* ContainsFiles(VFSURL* url, VFSDirEntry** items, int* num_items, char* rootpath)
 {
   const char* sub;
   if ((sub=strstr(url->filename, ".part")))
@@ -857,17 +857,20 @@ void* ContainsFiles(VFSURL* url, VFSDirEntry** items, int* num_items)
 
     if (strPath[strPath.size()-1] == '/')
       strPath.erase(strPath.end()-1);
+    char* encoded = XBMC->URLEncode(strPath.c_str());
+    std::stringstream str;
+    str << "rar://" << encoded << "/";
+    strcpy(rootpath, str.str().c_str());
     for (size_t iEntry=0;iEntry<itms->size();++iEntry)
     {
       char* tofree = (*itms)[iEntry].path;
-      char* encoded = XBMC->URLEncode(strPath.c_str());
       std::stringstream str;
       str << "rar://" << encoded << "/" << (*itms)[iEntry].path << url->options;
       (*itms)[iEntry].path = strdup(str.str().c_str());
       (*itms)[iEntry].title = NULL;
       free(tofree);
-      XBMC->FreeString(encoded);
     }
+    XBMC->FreeString(encoded);
     *items = &(*itms)[0];
     *num_items = itms->size();
     return itms;
