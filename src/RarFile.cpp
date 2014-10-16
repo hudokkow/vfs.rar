@@ -443,7 +443,7 @@ void* Open(VFSURL* url)
   return NULL;
 }
 
-unsigned int Read(void* context, void* lpBuf, int64_t uiBufSize)
+ssize_t Read(void* context, void* lpBuf, size_t uiBufSize)
 {
   RARContext* ctx = (RARContext*)context;
 
@@ -456,14 +456,14 @@ unsigned int Read(void* context, void* lpBuf, int64_t uiBufSize)
   if( !ctx->extract->GetDataIO().hBufferEmpty->Wait(5000))
   {
     XBMC->Log(ADDON::LOG_ERROR, "%s - Timeout waiting for buffer to empty", __FUNCTION__);
-    return 0;
+    return -1;
   }
 
   uint8_t* pBuf = (uint8_t*)lpBuf;
-  int64_t uicBufSize = uiBufSize;
+  ssize_t uicBufSize = uiBufSize;
   if (ctx->inbuffer > 0)
   {
-    int64_t iCopy = uiBufSize<ctx->inbuffer?uiBufSize:ctx->inbuffer;
+    ssize_t iCopy = uiBufSize<ctx->inbuffer?uiBufSize:ctx->inbuffer;
     memcpy(lpBuf,ctx->head,size_t(iCopy));
     ctx->head += iCopy;
     ctx->inbuffer -= int(iCopy);
@@ -500,7 +500,7 @@ unsigned int Read(void* context, void* lpBuf, int64_t uiBufSize)
     if (ctx->inbuffer == 0)
       break;
 
-    int copy = std::min(ctx->inbuffer, uicBufSize);
+    ssize_t copy = std::min(ctx->inbuffer, uicBufSize);
     memcpy(pBuf, ctx->head, copy);
     ctx->head += copy;
     pBuf += copy;
@@ -511,7 +511,7 @@ unsigned int Read(void* context, void* lpBuf, int64_t uiBufSize)
 
   ctx->extract->GetDataIO().hBufferEmpty->Signal();
 
-  return static_cast<unsigned int>(uiBufSize-uicBufSize);
+  return uiBufSize-uicBufSize;
 }
 
 bool Close(void* context)
@@ -812,7 +812,7 @@ int Truncate(void* context, int64_t size)
   return -1;
 }
 
-int Write(void* context, const void* lpBuf, int64_t uiBufSize)
+ssize_t Write(void* context, const void* lpBuf, size_t uiBufSize)
 {
   return -1;
 }
