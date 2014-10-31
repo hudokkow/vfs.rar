@@ -26,8 +26,8 @@
 
 #include "UnrarX.hpp"
 
-#include <xbmc/threads/threads.h>
-#include <xbmc/xbmc_vfs_types.h>
+#include <kodi/threads/threads.h>
+#include <kodi/kodi_vfs_types.h>
 
 #define EXFILE_OVERWRITE 1
 #define EXFILE_AUTODELETE 2

@@ -2,7 +2,7 @@
 
 // BE WARNED THIS FILE IS HEAVILY MODIFIED TO BE USED WITH XBMC
 
-#include <xbmc/libXBMC_addon.h>
+#include <kodi/libXBMC_addon.h>
 
 extern ADDON::CHelper_libXBMC_addon* XBMC;
 

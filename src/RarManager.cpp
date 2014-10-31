@@ -20,7 +20,7 @@
 
 #include "RarManager.h"
 
-#include "xbmc/libXBMC_addon.h"
+#include "kodi/libXBMC_addon.h"
 extern ADDON::CHelper_libXBMC_addon *XBMC;
 
 #include <set>
@@ -339,6 +339,8 @@ CFileInfo* CRarManager::GetFileInRar(const std::string& strRarPath, const std::s
   for (vector<CFileInfo>::iterator it2=j->second.second.begin(); it2 != j->second.second.end(); ++it2)
     if (it2->m_strPathInRar == strPathInRar)
       return &(*it2);
+
+  return NULL;
 }
 
 bool CRarManager::GetPathInCache(std::string& strPathInCache, const std::string& strRarPath, const std::string& strPathInRar)
@@ -350,6 +352,8 @@ bool CRarManager::GetPathInCache(std::string& strPathInCache, const std::string&
   for (vector<CFileInfo>::iterator it2=j->second.second.begin(); it2 != j->second.second.end(); ++it2)
     if (it2->m_strPathInRar == strPathInRar)
       return XBMC->FileExists(it2->m_strCachedPath.c_str(), true);
+
+  return false;
 }
 
 bool CRarManager::IsFileInRar(bool& bResult, const std::string& strRarPath, const std::string& strPathInRar)
