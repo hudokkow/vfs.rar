@@ -255,6 +255,7 @@ bool File::Close()
 #if defined(_WIN_32) || defined(TARGET_POSIX)
         //success=CloseHandle(hFile) != FALSE;
         XBMC->CloseFile(m_File);
+        m_File = NULL;
 #else
         success=fclose(hFile)!=EOF;
 #endif
