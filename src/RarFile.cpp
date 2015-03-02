@@ -517,6 +517,9 @@ ssize_t Read(void* context, void* lpBuf, size_t uiBufSize)
 bool Close(void* context)
 {
   RARContext* ctx = (RARContext*)context;
+  if (!ctx)
+    return true;
+
   if (ctx->file)
   {
     XBMC->CloseFile(ctx->file);
