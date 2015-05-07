@@ -21,7 +21,7 @@
 #ifndef RAR_EXTRACT_THREAD_H_
 #define RAR_EXTRACT_THREAD_H_
 
-#include <kodi/threads/threads.h>
+#include <platform/threads/threads.h>
 
 class Archive;
 class CmdExtract;

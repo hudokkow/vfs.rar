@@ -4,7 +4,7 @@
 class CmdAdd;
 class Unpack;
 
-#include <kodi/threads/mutex.h>
+#include <platform/threads/mutex.h>
 
 class ComprDataIO
 {
