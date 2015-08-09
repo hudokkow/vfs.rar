@@ -18,7 +18,7 @@
  *
  */
 
-#include "kodi/libXBMC_addon.h"
+#include "libXBMC_addon.h"
 #include "platform/threads/mutex.h"
 #include <map>
 #include <sstream>
@@ -34,8 +34,8 @@ ADDON::CHelper_libXBMC_addon *XBMC           = NULL;
 
 extern "C" {
 
-#include "kodi/kodi_vfs_dll.h"
-#include "kodi/IFileTypes.h"
+#include "kodi_vfs_dll.h"
+#include "IFileTypes.h"
 
 //-- Create -------------------------------------------------------------------
 // Called on load. Addon should fully initalize or return error status

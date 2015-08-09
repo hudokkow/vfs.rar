@@ -18,7 +18,7 @@
  *
  */
 #include "RarExtractThread.h"
-#include "kodi/libXBMC_addon.h"
+#include "libXBMC_addon.h"
 #include "rar.hpp"
 
 extern ADDON::CHelper_libXBMC_addon *XBMC;
